@@ -1,1 +1,1 @@
-test
+RIKU App
