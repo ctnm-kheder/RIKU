@@ -21,4 +21,4 @@ npx expo start --tunnel
 ```
 ### 4. Download and Use Expo Go
 
- After the Expo server has started, a QR code will be displayed in the terminal. Scan this QR code with the Expo Go app (Android) or the Expo Go app (iOS) to open and test the app on your device.
+ After the Expo server has started, a QR code will be displayed in the terminal. Scan this QR code with the Expo Go app (Android) or the Camera app (iOS) to open and test the app on your device.
