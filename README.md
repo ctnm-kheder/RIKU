@@ -12,7 +12,7 @@ Node js and npm
 
 ### 2. Install all dependecies
 ```sh
-$  npm install
+npm install
 ```
 
 ### 3. Run your project

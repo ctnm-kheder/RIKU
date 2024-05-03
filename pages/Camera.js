@@ -1,15 +1,16 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, Modal, Button,Text  } from 'react-native';
 import { MaterialIcons,MaterialCommunityIcons,FontAwesome6 } from '@expo/vector-icons';
-import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function Cameras() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [imageUri, setImageUri] = useState(null);
   const cameraRef = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   if (!permission) {
     return <View />;
@@ -27,9 +28,13 @@ export default function Cameras() {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      let photo = await cameraRef.current.takePictureAsync();
-      setImageUri(photo.uri);
-      await MediaLibrary.saveToLibraryAsync(photo.uri);
+        let photo = await cameraRef.current.takePictureAsync({
+            quality: 1.0,  // Maximale Bildqualität
+            exif: true,
+            base64: true
+          });
+      handleImageProcessing(photo.uri);
+      setModalVisible(true);
     }
   };
 
@@ -49,10 +54,30 @@ export default function Cameras() {
       quality: 1,
     });
 
-    // Wenn der Benutzer nicht abbricht, setze das Bild-URI
-    if (!result.cancelled) {
-      setImageUri(result.uri);
+    // setze das Bild-URI
+    if (!result.cancelled && result.assets && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri);
+      setModalVisible(true);
     }
+  };
+
+  const handleImageProcessing = async (uri) => {
+    const { width, height } = await ImageManipulator.manipulateAsync(uri);
+
+    // Berechnen zentralen Ausschnitt
+    const cropSize = 500;
+    const originX = (width - cropSize) / 2;
+    const originY = (height - cropSize) / 2;
+
+    // Zuschneiden des Bildes auf den zentralen Bereich
+    const finalCrop = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ crop: { originX, originY, width: cropSize, height: cropSize } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+    );
+
+
+    setImageUri(finalCrop.uri);
   };
 
   function toggleCameraType() {
@@ -64,17 +89,40 @@ export default function Cameras() {
       <Camera ref={cameraRef} style={styles.camera} type={type}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.iconButton} onPress={pickImage}>
-            <MaterialCommunityIcons name="image-multiple" size={30} color="white" />
+            <MaterialCommunityIcons name="image-multiple" size={40} color="white" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
-            <MaterialIcons name="photo-camera" size={30} color="white" />
+            <MaterialIcons name="photo-camera" size={40} color="white" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={toggleCameraType}>
-            <FontAwesome6 name="rotate" size={30} color="white" />
+            <FontAwesome6 name="rotate" size={40} color="white" />
           </TouchableOpacity>
         </View>
-        {imageUri && <Image source={{ uri: imageUri }} style={styles.preview} />}
+        <View style={styles.focusCircle} />
       </Camera>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modalView}>
+         <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setModalVisible(!modalVisible)}
+          >
+            <Text  style={styles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: imageUri }} style={styles.fullSizeImage} resizeMode="contain" />
+          <Text>{imageUri}</Text>
+          <Button
+            title="Schließen"
+            onPress={() => setModalVisible(!modalVisible)}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -86,6 +134,8 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
     position: 'absolute',
@@ -95,16 +145,18 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    padding:20,
+    padding: 20,
     width: '100%',
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  iconButton: {
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+  focusCircle: {
+    width: 100,
+    height: 100,
     borderRadius: 50,
-    marginHorizontal: 10,
-    paddingLeft:20,
+    borderWidth: 2,
+    borderColor: 'white',
+    position: 'absolute',
+    alignSelf: 'center'
   },
   preview: {
     width: 100,
@@ -118,5 +170,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     borderRadius: 8,
     margin: 10,
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  fullSizeImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right:20,
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 50,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 20,
   },
 });
