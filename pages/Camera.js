@@ -1,6 +1,6 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, Modal, Button,Text  } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, Modal, Button, Text, Pressable  } from 'react-native';
 import { MaterialIcons,MaterialCommunityIcons,FontAwesome6 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -109,18 +109,14 @@ export default function Cameras() {
         }}
       >
         <View style={styles.modalView}>
-         <TouchableOpacity
+            <Pressable
             style={styles.closeButton}
-            onPress={() => setModalVisible(!modalVisible)}
-          >
-            <Text  style={styles.closeButtonText}>X</Text>
-          </TouchableOpacity>
+            onPress={() => {
+                setModalVisible(!modalVisible);
+            }}>
+                <Text style={styles.closeButtonText}>X</Text>
+            </Pressable>
           <Image source={{ uri: imageUri }} style={styles.fullSizeImage} resizeMode="contain" />
-          <Text>{imageUri}</Text>
-          <Button
-            title="Schließen"
-            onPress={() => setModalVisible(!modalVisible)}
-          />
         </View>
       </Modal>
     </View>
@@ -186,6 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     padding: 10,
     borderRadius: 50,
+    zIndex:100,
   },
   closeButtonText: {
     color: 'white',
