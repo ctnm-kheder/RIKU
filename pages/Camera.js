@@ -1,6 +1,6 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, Modal, Button, Text, Pressable  } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, Modal, Button, Text, Pressable, Platform  } from 'react-native';
 import { MaterialIcons,MaterialCommunityIcons,FontAwesome6 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
+    top: Platform.OS === 'ios' ? 100 : 30 ,
     right:20,
     backgroundColor: 'black',
     padding: 10,
