@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import Canvas, { Image as CanvasImage } from 'react-native-canvas';
+import {PMSColorMatching} from "../components/ColorMatching"
 
 export default function Cameras() {
   const [type, setType] = useState(CameraType.back);
@@ -15,6 +16,8 @@ export default function Cameras() {
   const [modalVisible, setModalVisible] = useState(false);
   const canvasRef = useRef(null);
   const [dominantColor, setDominantColor] = useState('rgba(0, 0, 0, 0)');
+  const [hexColor, setHexColor] = useState('#000000');
+  const [pantoneColors, setPantoneColors] = useState([]);
 
   if (!permission) {
     return <View />;
@@ -125,8 +128,13 @@ export default function Cameras() {
             let alpha = pixelData[3];
 
             const colorString = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-            console.log(colorString)
+            const hexColor = rgbaToHex(red, green, blue);
+            setHexColor(hexColor);
+
+         
             setDominantColor(colorString);
+            const closestPantoneColors = PMSColorMatching(hexColor.replace('#', ''));
+            setPantoneColors(closestPantoneColors);
 
           }).catch(error => {
             console.error("Fehler beim Zugriff auf _j:", error);
@@ -145,6 +153,19 @@ export default function Cameras() {
 
     draw();
   };
+
+  const rgbaToHex = (r, g, b) => {
+    const toHex = (component) => {
+      const hex = component.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  };
+
+  const formatHexColor = (color) => {
+    return color.length === 6 ? `#${color}` : color.length === 7 ? color : `#${color.slice(1, 7)}`;
+  }
 
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
@@ -186,8 +207,14 @@ export default function Cameras() {
           <Image source={{ uri: imageUri }} style={styles.fullSizeImage} resizeMode="contain" />
           <View style={[styles.colorDisplay, { backgroundColor: dominantColor }]}>
             <Text style={styles.colorText}>Dominant Color: {dominantColor}</Text>
+            <Text style={styles.colorText}>Hex Color: {hexColor}</Text>
           </View>
         </View>
+        {pantoneColors.map((color, index) => (
+              <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(color.match(/\((.*)\)/)[1]) }]}>
+                <Text style={styles.colorText}>{color} {index}</Text>
+              </View>
+            ))}
       </Modal>
 
       <Canvas
@@ -288,5 +315,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     textAlign: 'center', // Text zentrieren
+  },
+
+  pantoneColorDisplay: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginVertical: 5,
   },
 });
