@@ -8,7 +8,6 @@ const steps = [
     { key: 'request', headline: 'Third:', text: 'Request a free sample for exactly this colour', icon: 'opacity' },
   ];
 
-
 export default function Home({navigation}) {
   return (
         <View style={styles.container}>
@@ -28,7 +27,6 @@ export default function Home({navigation}) {
                 <Text style={styles.btnText}>Start scanning</Text>
                 <Fontisto name="arrow-right-l" size={20} color="#ee0051" />
             </Pressable>
-
 
         </View>
   );

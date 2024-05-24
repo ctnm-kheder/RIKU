@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime';
 import React, { useState, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Modal, Text, Pressable, Platform } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
@@ -6,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import Canvas, { Image as CanvasImage } from 'react-native-canvas';
-import {PMSColorMatching} from "../components/ColorMatching"
+import { PMSColorMatching } from "../components/ColorMatching"
 
 export default function Cameras() {
   const [type, setType] = useState(CameraType.back);
@@ -18,6 +19,7 @@ export default function Cameras() {
   const [dominantColor, setDominantColor] = useState('rgba(0, 0, 0, 0)');
   const [hexColor, setHexColor] = useState('#000000');
   const [pantoneColors, setPantoneColors] = useState([]);
+  const [error, setError] = useState('');
 
   if (!permission) {
     return <View />;
@@ -87,7 +89,7 @@ export default function Cameras() {
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
       extractColorFromImage(base64);
     } catch (error) {
-      console.error('Error Base64:', error);
+      setError(`Error Base64: ${error.message}`);
     }
   };
 
@@ -98,7 +100,7 @@ export default function Cameras() {
         const ctx = canvas.getContext('2d');
 
         if (!ctx) {
-          console.error('Fehler beim Abrufen des Canvas-Kontexts');
+          setError('Fehler beim Abrufen des Canvas-Kontexts');
           return;
         }
 
@@ -116,37 +118,36 @@ export default function Cameras() {
           try {
             const pixel = ctx.getImageData(x, y, 1, 1);
             pixel.then(innerObject => {
-            console.log(innerObject);
+              console.log(innerObject);
 
-            let pixelData = innerObject.data;
+              let pixelData = innerObject.data;
 
-            console.log(pixelData);
+              console.log(pixelData);
 
-            let red = pixelData[0];
-            let green = pixelData[1];
-            let blue = pixelData[2];
-            let alpha = pixelData[3];
+              let red = pixelData[0];
+              let green = pixelData[1];
+              let blue = pixelData[2];
+              let alpha = pixelData[3];
 
-            const colorString = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-            const hexColor = rgbaToHex(red, green, blue);
-            setHexColor(hexColor);
+              const colorString = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+              const hexColor = rgbaToHex(red, green, blue);
+              setHexColor(hexColor);
 
-         
-            setDominantColor(colorString);
-            const closestPantoneColors = PMSColorMatching(hexColor.replace('#', ''));
-            setPantoneColors(closestPantoneColors);
+              setDominantColor(colorString);
+              const closestPantoneColors = PMSColorMatching(hexColor.replace('#', ''));
+              setPantoneColors(closestPantoneColors);
 
-          }).catch(error => {
-            console.error("Fehler beim Zugriff auf _j:", error);
-          });
+            }).catch(error => {
+              setError(`Fehler beim Zugriff auf _j: ${error.message}`);
+            });
 
           } catch (error) {
-            console.error('Fehler beim Abrufen der Pixel-Daten:', error);
+            setError(`Fehler beim Abrufen der Pixel-Daten: ${error.message}`);
           }
         });
 
         img.addEventListener('error', (err) => {
-          console.error('Fehler beim Laden des Bildes', err);
+          setError(`Fehler beim Laden des Bildes: ${err.message}`);
         });
       }
     };
@@ -187,13 +188,15 @@ export default function Cameras() {
         </View>
         <View style={styles.focusCircle} />
       </Camera>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
       <Modal
-      animationType="slide"
-      transparent={false}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(!modalVisible);
-      }}
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
       >
         <View style={styles.modalView}>
           <Pressable
@@ -204,17 +207,20 @@ export default function Cameras() {
           >
             <Text style={styles.closeButtonText}>X</Text>
           </Pressable>
-          <Image source={{ uri: imageUri }} style={styles.fullSizeImage} resizeMode="contain" />
           <View style={[styles.colorDisplay, { backgroundColor: dominantColor }]}>
             <Text style={styles.colorText}>Dominant Color: {dominantColor}</Text>
             <Text style={styles.colorText}>Hex Color: {hexColor}</Text>
           </View>
-        </View>
-        {pantoneColors.map((color, index) => (
+
+          <View style={[styles.colorDisplay]}>
+            <Text style={styles.colorMapping}>colour mapping</Text>
+          </View>
+            {pantoneColors.map((color, index) => (
               <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(color.match(/\((.*)\)/)[1]) }]}>
                 <Text style={styles.colorText}>{color} {index}</Text>
               </View>
             ))}
+          </View>
       </Modal>
 
       <Canvas
@@ -294,6 +300,8 @@ const styles = StyleSheet.create({
   colorText: {
     fontSize: 18,
     marginTop: 10,
+    color:'white',
+    textAlign:'center'
   },
   canvas: {
     width: 1,
@@ -309,20 +317,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 10,
     marginTop: 20,
-
   },
-  colorText: {
-    fontSize: 15,
-    color: 'white',
-    textAlign: 'center', // Text zentrieren
-  },
-
   pantoneColorDisplay: {
-    width: '100%',
-    height: 50,
+    width: '80%',
+    height: 80,
     justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 50,
     borderRadius: 10,
     marginVertical: 5,
   },
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  colorMapping: {
+    color:'black',
+    fontSize: 18,
+    textAlign: 'center',
+  }
 });

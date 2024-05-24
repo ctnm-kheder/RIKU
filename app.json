@@ -1,12 +1,11 @@
 {
   "expo": {
     "name": "RIKU",
-    "slug": "riku-app-7ciyl9kl477dd5vinnj",
+    "slug": "RIKU",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "owner": "ctnm",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "RIKU.ctnm"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +30,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "21b80ce6-1578-4a60-8a7b-ada2cdaaab76"
+        "projectId": "bfefc1b8-7331-4871-a532-f9743fc64969"
       }
     },
     "plugins": [
