@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Expo
+import { Ionicons } from '@expo/vector-icons';
 
 const CustomHeader = ({ title1, title2 }) => {
   const navigation = useNavigation();
