@@ -55,12 +55,12 @@ const styles = StyleSheet.create({
   logo: {
     width: 50,
     height: 50,
-    resizeMode: 'contain',
+    contentFit: 'contain',
   },
   logos: {
     width: 100,
     height: 100,
-    resizeMode: 'contain',
+    contentFit: 'contain',
   },
 });
 
