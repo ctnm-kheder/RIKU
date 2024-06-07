@@ -11,7 +11,7 @@ const CustomHeader = ({ title1, title2 }) => {
   const canGoBack = navigation.canGoBack();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <LinearGradient
         colors={['#ee0051', '#f9ae3e']}
         start={{ x: 0, y: 0 }}
@@ -30,7 +30,7 @@ const CustomHeader = ({ title1, title2 }) => {
           </Text>
         </View>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 

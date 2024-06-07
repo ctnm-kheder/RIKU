@@ -16,7 +16,7 @@ const StartHeader = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
-    paddingTop: 70,
+    paddingTop: 50,
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor:"#f5f5f5",

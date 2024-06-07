@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     color:'#005482',
   },
   footer: {
-    padding: 20,
+    paddingHorizontal: 20,
   },
   icon: {
     width:50,

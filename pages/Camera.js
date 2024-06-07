@@ -215,9 +215,9 @@ export default function Cameras() {
           <View style={[styles.colorDisplay]}>
             <Text style={styles.colorMapping}>colour mapping</Text>
           </View>
-            {pantoneColors.map((color, index) => (
-              <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(color.match(/\((.*)\)/)[1]) }]}>
-                <Text style={styles.colorText}>{color} {index}</Text>
+            {pantoneColors.map((colorInfo, index) => (
+              <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
+                  <Text style={styles.colorText}>{colorInfo.colour} ({colorInfo.rgb})</Text>
               </View>
             ))}
           </View>
