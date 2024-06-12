@@ -7,6 +7,8 @@ import CustomHeader from './components/CustomHeader';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import StartHeader from './components/StartHeader';
 import StartPage from './pages/StartPage';
+import ColorDetails from './pages/OrderColor';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -36,6 +38,15 @@ export default function App() {
               header: () => <CustomHeader title1="SCAN YOUR" title2="COLOUR" />
             }}
           />
+
+        <Stack.Screen
+           name="ColorDetails"
+           component={ColorDetails}
+           options={{
+            header: () => <CustomHeader title1="SCAN YOUR" title2="COLOUR" />
+          }}
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

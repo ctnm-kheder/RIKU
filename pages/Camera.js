@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useCallback  } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Modal, Text, Pressable, Platform } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome6 } from '@expo/vector-icons';
@@ -8,8 +8,10 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 import { PMSColorMatching } from "../components/ColorMatching"
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
-export default function Cameras() {
+
+export default function Cameras({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [imageUri, setImageUri] = useState(null);
@@ -20,11 +22,27 @@ export default function Cameras() {
   const [hexColor, setHexColor] = useState('#000000');
   const [pantoneColors, setPantoneColors] = useState([]);
   const [error, setError] = useState('');
+  const isFocused = useIsFocused();
+  const [hasPermission, setHasPermission] = useState(null);
 
-  if (!permission) {
+  useFocusEffect(
+    useCallback(() => {
+        async function initCamera() {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
+        }
+
+        initCamera();
+    }, [])
+);
+
+if (hasPermission === null) {
     return <View />;
-  }
+}
 
+if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+}
   if (!permission.granted) {
     return (
       <View style={styles.container}>
@@ -171,23 +189,29 @@ export default function Cameras() {
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
-
+  const handleColorSelection = (color, colorName) => {
+    setModalVisible(false);
+    navigation.navigate('ColorDetails', { color, colorName });
+  };
+  
   return (
     <View style={styles.container}>
-      <Camera ref={cameraRef} style={styles.camera} type={type}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.iconButton} onPress={pickImage}>
-            <MaterialCommunityIcons name="image-multiple" size={40} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
-            <MaterialIcons name="photo-camera" size={40} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={toggleCameraType}>
-            <FontAwesome6 name="rotate" size={40} color="white" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.focusCircle} />
-      </Camera>
+         {isFocused && (
+        <Camera ref={cameraRef} style={styles.camera} type={type}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={pickImage}>
+              <MaterialCommunityIcons name="image-multiple" size={40} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
+              <MaterialIcons name="photo-camera" size={40} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={toggleCameraType}>
+              <FontAwesome6 name="rotate" size={40} color="white" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.focusCircle} />
+        </Camera>
+       )}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <Modal
@@ -198,6 +222,9 @@ export default function Cameras() {
           setModalVisible(!modalVisible);
         }}
       >
+
+
+
         <View style={styles.modalView}>
           <Pressable
             style={styles.closeButton}
@@ -207,19 +234,32 @@ export default function Cameras() {
           >
             <Text style={styles.closeButtonText}>X</Text>
           </Pressable>
-          <View style={[styles.colorDisplay, { backgroundColor: dominantColor }]}>
-            <Text style={styles.colorText}>Dominant Color: {dominantColor}</Text>
-            <Text style={styles.colorText}>Hex Color: {hexColor}</Text>
+
+          <View style={styles.customade}>
+            <Text style={styles.customadeText}>The choice is yours! EIther we can offer you a Custommade Color of your scan or the closest color from our ERKA-Standard range, as shown below.</Text>
           </View>
 
-          <View style={[styles.colorDisplay]}>
-            <Text style={styles.colorMapping}>colour mapping</Text>
+
+          <View style={[styles.colorDisplay, { backgroundColor: dominantColor }]}>
+            <Text style={styles.colorText}>Your scanned colour</Text>
           </View>
+
+          <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, 'Your scanned colour')}>
+            <Text style={styles.btnText}>Continue with a custommade colour</Text>
+          </Pressable>
+
             {pantoneColors.map((colorInfo, index) => (
-              <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
-                  <Text style={styles.colorText}>{colorInfo.colour} ({colorInfo.rgb})</Text>
+              <View key={index} style={[styles.colorDisplay, styles.erkaColor]}>
+                <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
+
+                  <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
+                </View>
+                  <Pressable style={[styles.button, {borderColor: `#${colorInfo.rgb}`, }]} onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), colorInfo.colour)}>
+                    <Text style={styles.btnText}>Continue with ERKA colour {colorInfo.colour}</Text>
+                  </Pressable>
               </View>
             ))}
+
           </View>
       </Modal>
 
@@ -300,8 +340,9 @@ const styles = StyleSheet.create({
   colorText: {
     fontSize: 18,
     marginTop: 10,
+    marginLeft:40,
     color:'white',
-    textAlign:'center'
+    textAlign:'left'
   },
   canvas: {
     width: 1,
@@ -312,19 +353,18 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
   colorDisplay: {
-    width: '80%',
-    height: 100,
-    justifyContent: 'center',
+    width: '100%',
+    height: 150,
+    justifyContent: 'flex-start',
+
     borderRadius: 10,
     marginTop: 20,
   },
   pantoneColorDisplay: {
-    width: '80%',
-    height: 80,
-    justifyContent: 'center',
-    marginTop: 50,
-    borderRadius: 10,
-    marginVertical: 5,
+    width: '100%',
+    height: 150,
+    justifyContent: 'flex-start',
+    borderRadius:10,
   },
   errorText: {
     color: 'red',
@@ -336,5 +376,39 @@ const styles = StyleSheet.create({
     color:'black',
     fontSize: 18,
     textAlign: 'center',
-  }
+  },
+  customade: {
+    width:"100%",
+  },
+  customadeText: {
+    fontSize: 19,
+    color: '#222B2F',
+    lineHeight:28,
+    paddingLeft:20,
+    paddingRight:20,
+  },
+  erkaColor:{
+    alignItems:'center',
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    width:"80%",
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#EEEEEE',
+    borderRadius: 50,
+    borderWidth: 1,
+    marginBottom:10,
+    marginTop:20,
+    alignItems:'center',
+  },
+  btnText: {
+    fontSize: 18,
+    lineHeight: 21,
+    fontWeight: '500',
+    letterSpacing: 0.25,
+    marginRight: 10,
+  },
 });
