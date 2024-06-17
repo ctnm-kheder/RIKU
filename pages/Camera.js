@@ -244,7 +244,7 @@ if (hasPermission === false) {
             <Text style={styles.colorText}>Your scanned colour</Text>
           </View>
 
-          <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, 'Your scanned colour')}>
+          <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, hexColor)}>
             <Text style={styles.btnText}>Continue with a custommade colour</Text>
           </Pressable>
 

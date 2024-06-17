@@ -1,9 +1,11 @@
 import React,  { useState }  from 'react';
-import { View, TextInput, Pressable, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet, ScrollView, Text, ActivityIndicator  } from 'react-native';
 import axios from 'react-native-axios';
 
 const ColorDetails = ({ route }) => {
-    const { color, colorName } = route.params; // Get the color, type, and colorName passed as parameters
+    const { color, colorName } = route.params;
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const [formData, setFormData] = useState({
         companyName: '',
@@ -12,8 +14,36 @@ const ColorDetails = ({ route }) => {
         postcodeCity: '',
         country: '',
         telephone: '',
-        commentRequest: ''
+        commentRequest: '',
+        orderColor:colorName,
     });
+
+    const validateFormData = (formData) => {
+            let errors = {};
+
+            /*
+            // Überprüfe, ob der Firmenname vorhanden ist
+            if (!formData.companyName.trim()) {
+                errors.companyName = 'Firmenname ist erforderlich';
+            }
+            */
+            // Überprüfe die E-Mail auf ein gültiges Format
+            if (!formData.email) {
+                errors.email = 'E-Mail ist erforderlich';
+            } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                errors.email = 'Ungültige E-Mail-Adresse';
+            }
+
+            // Überprüfe, ob das Telefonfeld nur Zahlen enthält (einfaches Beispiel)
+            if (!formData.telephone) {
+                errors.telephone = 'Telefonnummer ist erforderlich';
+            } else if (!/^\d+$/.test(formData.telephone)) {
+                errors.telephone = 'Telefonnummer darf nur Zahlen enthalten';
+            }
+
+            return errors;
+    };
+
 
     const handleChange = (name, value) => {
         setFormData(prevState => ({
@@ -24,17 +54,27 @@ const ColorDetails = ({ route }) => {
 
 
     const handleSubmit = async () => {
-        try {
-          const response = await axios.post('http://localhost:3000/send-email', formData);
-          
-          console.log('Response from server:', response.data);
-          alert('E-Mail sent successfully!');
-        } catch (error) {
-          console.error('Error sending E-Mail:', error);
-          alert('E-Mail send failed. Please try again later.');
-        }
-      };
-    
+            const errors = validateFormData(formData);
+            setErrors(errors);
+            if (Object.keys(errors).length === 0) {
+                setIsSubmitting(true);
+                try {
+                    const response = await axios.post('https://api-wt3a.onrender.com/send-email', formData);
+                    console.log('Response from server:', response.data);
+                    alert('E-Mail sent successfully!');
+                } catch (error) {
+                    console.error('Error sending E-Mail:', error);
+                    alert('E-Mail send failed. Please try again later.');
+                }
+                setIsSubmitting(false);
+            } else {
+                // Fehler anzeigen (z.B. durch Zustand oder direkt in der Oberfläche)
+                console.log('Validation errors:', errors);
+                alert('Please correct the errors');
+            }
+    };
+
+
 
 return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -44,6 +84,8 @@ return (
                 onChangeText={text => handleChange('companyName', text)}
                 value={formData.companyName}
             />
+
+
             <TextInput
                 style={styles.input}
                 placeholder="Surname/First name"
@@ -57,6 +99,9 @@ return (
                 value={formData.email}
                 keyboardType="email-address"
             />
+
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
             <TextInput
                 style={styles.input}
                 placeholder="Postcode/City"
@@ -76,6 +121,9 @@ return (
                 value={formData.telephone}
                 keyboardType="phone-pad"
             />
+
+             {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
+
             <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Comment/Request"
@@ -95,10 +143,13 @@ return (
                 </View>
             </View>
 
-            <Pressable style={styles.button}  onPress={handleSubmit}>
-                <Text style={styles.colorText}>Send</Text>
+            <Pressable style={styles.button} onPress={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? (
+                    <ActivityIndicator size="large" color={color} />
+                ) : (
+                    <Text style={styles.colorText}>Send</Text>
+                )}
             </Pressable>
-
             <Text style={[styles.colorText, {marginTop:10,}]}>We will automatically send a confirmation of your enquiry to your e-mail address</Text>
 
         </ScrollView>
@@ -111,7 +162,7 @@ const styles = StyleSheet.create({
         paddingTop: 20
     },
     input: {
-        height: 50,
+        height: 40,
         marginBottom: 12,
         borderWidth: 1,
         borderColor: '#cccccc',
@@ -168,6 +219,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ee0051',
       },
+      errorText:{
+        color:'red',
+        paddingBottom:10,
+      }
 });
 
 export default ColorDetails;
