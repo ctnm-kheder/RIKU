@@ -20,7 +20,7 @@ export default function Start({ navigation }) {
             onPress={() => navigation.navigate('Scan your object')}
           >
              <Image
-                source={require('../assets/footer-start.png')}
+                source={require('../assets/scanStartWeiß.png')}
                 style={styles.icon}
             />
             <Text style={styles.gradientBtnText}>SCAN YOUR{'\n'}COLOUR</Text>
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   icon: {
-    width:50,
-    height:50,
+    width:60,
+    height:60,
     contentFit: 'contain',
   }
 });

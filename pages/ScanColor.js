@@ -11,9 +11,9 @@ const steps = [
     text: 'Scan your object with the camera of your device',
     icon: (
       <Image
-        source={require('../assets/footer-start.png')}
+        source={require('../assets/scanStart.png')}
         style={{width: 80,
-            height: 80,
+            height:60,
             contentFit: 'contain',}}
       />
     ),
@@ -26,7 +26,7 @@ const steps = [
         <Image
           source={require('../assets/second-check.png')}
           style={{width: 80,
-              height: 80,
+              height: 60,
               contentFit: 'contain',}}
         />
       ),
@@ -39,7 +39,7 @@ const steps = [
         <Image
           source={require('../assets/third-request.png')}
           style={{width: 80,
-              height: 80,
+              height: 60,
               contentFit: 'contain',}}
         />
       ),
