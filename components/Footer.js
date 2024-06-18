@@ -1,11 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
+import { openUri } from './OpenUri'
+import { useNavigation } from '@react-navigation/native';
 
 const Footer = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.footerContainer}>
-      <TouchableOpacity style={styles.iconButton}  accessible={true} accessibilityLabel="Pick Image">
+      <TouchableOpacity  onPress={() => openUri('https://riku.com/')} style={styles.iconButton}  accessible={true} accessibilityLabel="Pick Image">
         <Image
           source={require('../assets/footer-ringe.png')}
           style={styles.logo}
@@ -13,7 +17,7 @@ const Footer = () => {
       </TouchableOpacity>
 
       <View style={styles.centerIconContainer}>
-        <TouchableOpacity style={styles.iconButton} accessible={true} accessibilityLabel="start Camera">
+        <TouchableOpacity  onPress={() => navigation.navigate('Scan your object')} style={styles.iconButton} accessible={true} accessibilityLabel="start Camera">
           <Image
             source={require('../assets/footer-start.png')}
             style={styles.logos}
@@ -21,7 +25,7 @@ const Footer = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.iconButton}  accessible={true} accessibilityLabel="color swatch">
+      <TouchableOpacity onPress={() => openUri('https://riku.com/farbmuster')} style={styles.iconButton}  accessible={true} accessibilityLabel="color swatch">
         <Image
           source={require('../assets/footer-tabler-color-swatch.png')}
           style={styles.logo}

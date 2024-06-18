@@ -209,7 +209,10 @@ if (hasPermission === false) {
               <FontAwesome6 name="rotate" size={40} color="white" />
             </TouchableOpacity>
           </View>
-          <View style={styles.focusCircle} />
+
+          <TouchableOpacity onPress={takePicture} style={styles.focusCircle}>
+              <MaterialCommunityIcons name="plus" size={40} color="white" />
+          </TouchableOpacity>
         </Camera>
        )}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -300,7 +303,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
     position: 'absolute',
-    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
   },
   preview: {
     width: 100,
