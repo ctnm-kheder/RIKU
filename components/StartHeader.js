@@ -1,10 +1,11 @@
 // components/StartHeader.js
 import React from 'react';
-import { SafeAreaView, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const StartHeader = () => {
   return (
-    <SafeAreaView style={styles.headerContainer}>
+    <SafeAreaView edges={["top"]} style={styles.headerContainer}>
       <Image 
         source={require('../assets/logo.png')}
         style={styles.logo}
@@ -16,7 +17,7 @@ const StartHeader = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
-    paddingTop: 50,
+    paddingTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor:"#f5f5f5",
