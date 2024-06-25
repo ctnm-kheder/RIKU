@@ -6,7 +6,7 @@ import Camera from './pages/Camera';
 import CustomHeader from './components/CustomHeader';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import StartHeader from './components/StartHeader';
-import StartPage from './pages/StartPage';
+import Overview from './pages/Overview';
 import ColorDetails from './pages/OrderColor';
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +25,7 @@ export default function App() {
           />
           <Stack.Screen
             name="Start"
-            component={StartPage}
+            component={Overview}
             options={{
               header: () => <StartHeader />
             }} 

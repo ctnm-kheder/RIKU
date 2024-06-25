@@ -1,14 +1,13 @@
 {
   "expo": {
     "name": "RIKU",
-    "slug": "riku-app-7ciyl9kl477dd5vinnj",
+    "slug": "RIKU",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/Ringe.png",
+    "icon": "./assets/app-logo.png",
     "userInterfaceStyle": "light",
-    "owner": "ctnm",
     "splash": {
-      "image": "./assets/Ringe.png",
+      "image": "./assets/app-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#EEEEEE"
     },
@@ -21,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Ringe.png",
+        "foregroundImage": "./assets/app-logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "RIKU.ctnm"
@@ -31,7 +30,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "21b80ce6-1578-4a60-8a7b-ada2cdaaab76"
+        "projectId": "bfefc1b8-7331-4871-a532-f9743fc64969"
       }
     },
     "plugins": [

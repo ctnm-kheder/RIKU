@@ -55,7 +55,7 @@ export default function Start({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 30,
   },
   buttonContainer: {
     flex: 1,
@@ -64,15 +64,14 @@ const styles = StyleSheet.create({
   gradient: {
     borderRadius: 20,
     marginVertical: 10,
+    height: '20%',
   },
   gradientButton: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
     borderRadius: 20,
-    height: 150,
+    height: '100%',
   },
   gradientBtnText: {
     fontSize: 24,
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: '#ffffff',
     marginVertical: 10,
-    height: 150, // Set height to 50px
+    height: '20%',
   },
   btnText: {
     fontSize: 24,
@@ -106,9 +105,6 @@ const styles = StyleSheet.create({
   },
   btnTextRinge: {
     color:'#005482',
-  },
-  footer: {
-    paddingHorizontal: 20,
   },
   icon: {
     width:60,

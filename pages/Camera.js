@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime';
 import React, { useState, useRef,useCallback  } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, Modal, Text, Pressable, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Modal, Text, Pressable, Platform } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome6 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 import { PMSColorMatching } from "../components/ColorMatching"
 import { useIsFocused, useFocusEffect } from '@react-navigation/native';
+import { Image as ExpoImage } from 'expo-image';
 
 
 export default function Cameras({ navigation }) {
@@ -199,19 +200,19 @@ if (hasPermission === false) {
          {isFocused && (
         <Camera ref={cameraRef} style={styles.camera} type={type}>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={pickImage}>
-              <MaterialCommunityIcons name="image-multiple" size={40} color="white" />
-            </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
-              <MaterialIcons name="photo-camera" size={40} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={toggleCameraType}>
-              <FontAwesome6 name="rotate" size={40} color="white" />
+            <ExpoImage
+              source={require('../assets/photo-camera.png')}
+              style={styles.icon}
+              />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={takePicture} style={styles.focusCircle}>
-              <MaterialCommunityIcons name="plus" size={40} color="white" />
+          <TouchableOpacity style={styles.focusCircle}>
+          <ExpoImage
+              source={require('../assets/sucher.png')}
+              style={styles.sucher}
+              />
           </TouchableOpacity>
         </Camera>
        )}
@@ -225,9 +226,6 @@ if (hasPermission === false) {
           setModalVisible(!modalVisible);
         }}
       >
-
-
-
         <View style={styles.modalView}>
           <Pressable
             style={styles.closeButton}
@@ -290,17 +288,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     left: 0,
     right: 0,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 20,
     padding: 20,
     width: '100%',
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
   focusCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
+    width: 200,
+    height: 200,
+    borderWidth: 0,
     borderColor: 'white',
     position: 'absolute',
     justifyContent: 'center',
@@ -416,4 +413,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     marginRight: 10,
   },
+  icon: {
+    width:90,
+    height:90,
+    contentFit: 'contain',
+  },
+  sucher: {
+    width:150,
+    height:150,
+    contentFit: 'contain',
+  }
 });

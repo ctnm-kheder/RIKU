@@ -11,7 +11,7 @@ const Footer = () => {
     <View style={styles.footerContainer}>
       <TouchableOpacity  onPress={() => openUri('https://riku.com/')} style={styles.iconButton}  accessible={true} accessibilityLabel="Pick Image">
         <Image
-          source={require('../assets/footer-ringe.png')}
+          source={require('../assets/Ringe.png')}
           style={styles.logo}
         />
       </TouchableOpacity>
@@ -27,7 +27,7 @@ const Footer = () => {
 
       <TouchableOpacity onPress={() => openUri('https://riku.com/farbmuster')} style={styles.iconButton}  accessible={true} accessibilityLabel="color swatch">
         <Image
-          source={require('../assets/footer-tabler-color-swatch.png')}
+          source={require('../assets/farbkreis.png')}
           style={styles.logo}
         />
       </TouchableOpacity>
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 0,
+    
   },
   iconButton: {
     alignItems: 'center',
@@ -57,8 +58,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     contentFit: 'contain',
   },
   logos: {
