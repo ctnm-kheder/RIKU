@@ -1,10 +1,11 @@
 {
   "expo": {
     "name": "RIKU",
-    "slug": "RIKU",
+    "slug": "riku-app-7ciyl9kl477dd5vinnj",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/app-logo.png",
+    "owner": "ctnm",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/app-logo.png",
@@ -30,7 +31,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "bfefc1b8-7331-4871-a532-f9743fc64969"
+        "projectId": "21b80ce6-1578-4a60-8a7b-ada2cdaaab76"
       }
     },
     "plugins": [

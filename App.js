@@ -8,6 +8,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import StartHeader from './components/StartHeader';
 import Overview from './pages/Overview';
 import ColorDetails from './pages/OrderColor';
+import StartPage from './pages/StartPage';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +26,16 @@ export default function App() {
             }} 
           />
           <Stack.Screen
-            name="Start"
+            name="Overview"
             component={Overview}
+            options={{
+              header: () => <StartHeader />
+            }} 
+          />
+
+          <Stack.Screen
+            name="Start"
+            component={StartPage}
             options={{
               header: () => <StartHeader />
             }} 
