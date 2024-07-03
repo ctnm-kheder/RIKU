@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {View, TextInput, Pressable, StyleSheet, ScrollView, Text, ActivityIndicator, Modal, Alert,BackHandler } from 'react-native';
 import axios from 'react-native-axios';
 import { useNavigation } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
+import { SelectCountry } from 'react-native-element-dropdown';
 
 const ColorDetails = ({ route }) => {
     const navigation = useNavigation();
@@ -13,100 +13,100 @@ const ColorDetails = ({ route }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
 
-    const countries = [
-        {label: "Afghanistan",value: "AF"},
-        {label: "Åland Islands",value: "AX"},
-        {label: "Albania",value: "AL"},
-        {label: "Algeria",value: "DZ"},
-        {label: "American Samoa",value: "AS"},
-        {label: "Andorra",value: "AD"},
-        {label: "Angola",value: "AO"},
-        {label: "Anguilla",value: "AI"},
-        {label: "Antarctica",value: "AQ"},
-        {label: "Antigua & Barbuda",value: "AG"},
-        {label: "Argentina",value: "AR"},
-        {label: "Armenia",value: "AM"},
-        {label: "Aruba",value: "AW"},
-        {label: "Australia",value: "AU"},
-        {label: "Austria",value: "AT"},
-        {label: "Azerbaijan",value: "AZ"},
-        {label: "Bahamas",value: "BS"},
-        {label: "Bahrain",value: "BH"},
-        {label: "Bangladesh",value: "BD"},
-        {label: "Barbados",value: "BB"},
-        {label: "Belarus",value: "BY"},
-        {label: "Belgium",value: "BE"},
-        {label: "Belize",value: "BZ"},
-        {label: "Benin",value: "BJ"},
+    const local_data  = [
+        {label: "Afghanistan",value: "Afghanistan"},
+        {label: "Åland Islands",value: "Åland Islands"},
+        {label: "Albania",value: "Albania"},
+        {label: "Algeria",value: "Algeria"},
+        {label: "American Samoa",value: "American Samoa"},
+        {label: "Andorra",value: "Andorra"},
+        {label: "Angola",value: "Angola"},
+        {label: "Anguilla",value: "Anguilla"},
+        {label: "Antarctica",value: "Antarctica"},
+        {label: "Antigua & Barbuda",value: "Antigua & Barbuda"},
+        {label: "Argentina",value: "Argentina"},
+        {label: "Armenia",value: "Armenia"},
+        {label: "Aruba",value: "Aruba"},
+        {label: "Australia",value: "Australia"},
+        {label: "Austria",value: "Austria"},
+        {label: "Azerbaijan",value: "Azerbaijan"},
+        {label: "Bahamas",value: "Bahamas"},
+        {label: "Bahrain",value: "Bahrain"},
+        {label: "Bangladesh",value: "Bangladesh"},
+        {label: "Barbados",value: "Barbados"},
+        {label: "Belarus",value: "Belarus"},
+        {label: "Belgium",value: "Belgium"},
+        {label: "Belize",value: "Belize"},
+        {label: "Benin",value: "Benin"},
         {label: "Bermuda",value: "BM"},
-        {label: "Bhutan",value: "BT"},
-        {label: "Bolivia",value: "BO"},
-        {label: "Caribbean Netherlands",value: "BQ"},
-        {label: "Bosnia & Herzegovina",value: "BA"},
-        {label: "Botswana",value: "BW"},
-        {label: "Bouvet Island",value: "BV"},
-        {label: "Brazil",value: "BR"},
-        {label: "British Indian Ocean Territory",value: "IO"},
-        {label: "Brunei",value: "BN"},
-        {label: "Bulgaria",value: "BG"},
-        {label: "Burkina Faso",value: "BF"},
-        {label: "Burundi",value: "BI"},
-        {label: "Cambodia",value: "KH"},
-        {label: "Cameroon",value: "CM"},
-        {label: "Canada",value: "CA"},
-        {label: "Cape Verde",value: "CV"},
-        {label: "Cayman Islands",value: "KY"},
-        {label: "Central African Republic",value: "CF"},
-        {label: "Chad",value: "TD"},
-        {label: "Chile",value: "CL"},
-        {label: "China",value: "CN"},
-        {label: "Christmas Island",value: "CX"},
-        {label: "Cocos (Keeling) Islands",value: "CC"},
-        {label: "Colombia",value: "CO"},
-        {label: "Comoros",value: "KM"},
-        {label: "Congo - Brazzaville",value: "CG"},
-        {label: "Congo - Kinshasa",value: "CD"},
-        {label: "Cook Islands",value: "CK"},
-        {label: "Costa Rica",value: "CR"},
-        {label: "Côte d’Ivoire",value: "CI"},
-        {label: "Croatia",value: "HR"},
-        {label: "Cuba",value: "CU"},
-        {label: "Curaçao",value: "CW"},
-        {label: "Cyprus",value: "CY"},
-        {label: "Czechia",value: "CZ"},
-        {label: "Denmark",value: "DK"},
-        {label: "Djibouti",value: "DJ"},
-        {label: "Dominica",value: "DM"},
-        {label: "Dominican Republic",value: "DO"},
-        {label: "Ecuador",value: "EC"},
-        {label: "Egypt",value: "EG"},
-        {label: "El Salvador",value: "SV"},
-        {label: "Equatorial Guinea",value: "GQ"},
-        {label: "Eritrea",value: "ER"},
-        {label: "Estonia",value: "EE"},
-        {label: "Ethiopia",value: "ET"},
-        {label: "Falkland Islands (Islas Malvinas)",value: "FK"},
-        {label: "Faroe Islands",value: "FO"},
-        {label: "Fiji",value: "FJ"},
-        {label: "Finland",value: "FI"},
-        {label: "France",value: "FR"},
-        {label: "French Guiana",value: "GF"},
-        {label: "French Polynesia",value: "PF"},
-        {label: "French Southern Territories",value: "TF"},
-        {label: "Gabon",value: "GA"},
-        {label: "Gambia",value: "GM"},
-        {label: "Georgia",value: "GE"},
-        {label: "Germany",value: "DE"},
-        {label: "Ghana",value: "GH"},
-        {label: "Gibraltar",value: "GI"},
-        {label: "Greece",value: "GR"},
-        {label: "Greenland",value: "GL"},
-        {label: "Grenada",value: "GD"},
-        {label: "Guadeloupe",value: "GP"},
-        {label: "Guam",value: "GU"},
-        {label: "Guatemala",value: "GT"},
-        {label: "Guernsey",value: "GG"},
-        {label: "Guinea",value: "GN"},
+        {label: "Bhutan",value: "Bhutan"},
+        {label: "Bolivia",value: "Bolivia"},
+        {label: "Caribbean Netherlands",value: "Caribbean Netherlands"},
+        {label: "Bosnia & Herzegovina",value: "Bosnia & Herzegovina"},
+        {label: "Botswana",value: "Botswana"},
+        {label: "Bouvet Island",value: "Bouvet Island"},
+        {label: "Brazil",value: "Brazil"},
+        {label: "British Indian Ocean Territory",value: "British Indian Ocean Territory"},
+        {label: "Brunei",value: "Brunei"},
+        {label: "Bulgaria",value: "Bulgaria"},
+        {label: "Burkina Faso",value: "Burkina Faso"},
+        {label: "Burundi",value: "Burundi"},
+        {label: "Cambodia",value: "Cambodia"},
+        {label: "Cameroon",value: "Cameroon"},
+        {label: "Canada",value: "Canada"},
+        {label: "Cape Verde",value: "Cape Verde"},
+        {label: "Cayman Islands",value: "Cayman Islands"},
+        {label: "Central African Republic",value: "Central African Republic"},
+        {label: "Chad",value: "Chad"},
+        {label: "Chile",value: "Chile"},
+        {label: "China",value: "China"},
+        {label: "Christmas Island",value: "Christmas Island"},
+        {label: "Cocos (Keeling) Islands",value: "Cocos (Keeling) Islands"},
+        {label: "Colombia",value: "Colombia"},
+        {label: "Comoros",value: "Comoros"},
+        {label: "Congo - Brazzaville",value: "Congo - Brazzaville"},
+        {label: "Congo - Kinshasa",value: "Congo - Kinshasa"},
+        {label: "Cook Islands",value: "Cook Islands"},
+        {label: "Costa Rica",value: "Costa Rica"},
+        {label: "Côte d’Ivoire",value: "Côte d’Ivoire"},
+        {label: "Croatia",value: "Croatia"},
+        {label: "Cuba",value: "Cuba"},
+        {label: "Curaçao",value: "Curaçao"},
+        {label: "Cyprus",value: "Cyprus"},
+        {label: "Czechia",value: "Czechia"},
+        {label: "Denmark",value: "Denmark"},
+        {label: "Djibouti",value: "Djibouti"},
+        {label: "Dominica",value: "Dominica"},
+        {label: "Dominican Republic",value: "Dominican Republic"},
+        {label: "Ecuador",value: "Ecuador"},
+        {label: "Egypt",value: "Egypt"},
+        {label: "El Salvador",value: "El Salvador"},
+        {label: "Equatorial Guinea",value: "Equatorial Guinea"},
+        {label: "Eritrea",value: "Eritrea"},
+        {label: "Estonia",value: "Estonia"},
+        {label: "Ethiopia",value: "Ethiopia"},
+        {label: "Falkland Islands (Islas Malvinas)",value: "Falkland Islands (Islas Malvinas)"},
+        {label: "Faroe Islands",value: "Faroe Islands"},
+        {label: "Fiji",value: "Fiji"},
+        {label: "Finland",value: "Finland"},
+        {label: "France",value: "France"},
+        {label: "French Guiana",value: "French Guiana"},
+        {label: "French Polynesia",value: "French Polynesia"},
+        {label: "French Southern Territories",value: "French Southern Territories"},
+        {label: "Gabon",value: "Gabon"},
+        {label: "Gambia",value: "Gambia"},
+        {label: "Georgia",value: "Georgia"},
+        {label: "Germany",value: "Germany"},
+        {label: "Ghana",value: "Ghana"},
+        {label: "Gibraltar",value: "Gibraltar"},
+        {label: "Greece",value: "Greece"},
+        {label: "Greenland",value: "Greenland"},
+        {label: "Grenada",value: "Grenada"},
+        {label: "Guadeloupe",value: "Guadeloupe"},
+        {label: "Guam",value: "Guam"},
+        {label: "Guatemala",value: "Guatemala"},
+        {label: "Guernsey",value: "Guernsey"},
+        {label: "Guinea",value: "Guinea"},
         {label: "Guinea-Bissau",value: "GW"},
         {label: "Guyana",value: "GY"},
         {label: "Haiti",value: "HT"},
@@ -402,14 +402,20 @@ const ColorDetails = ({ route }) => {
 
             {errors.country && <Text style={styles.errorText}>{errors.country}</Text>}
            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={formData.country}
-                    onValueChange={(itemValue, itemIndex) => handleChange('country', itemValue)}
-                    style={styles.picker}>
-                    {countries.map((country, index) => (
-                        <Picker.Item key={index} label={country.label} value={country.label} />
-                    ))}
-                </Picker>
+           <SelectCountry
+    style={styles.dropdown}
+    selectedTextStyle={styles.selectedTextStyle}
+    placeholderStyle={styles.placeholderStyle}
+    maxHeight={300}
+    value={formData.country}
+    data={local_data}
+    valueField="label"
+    labelField="label"
+    placeholder="Select country"
+    searchPlaceholder="Search..."
+    onChange={(itemValue) => handleChange('country', itemValue.value)}
+/>
+
             </View>
 
             {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
@@ -607,7 +613,24 @@ const styles = StyleSheet.create({
     picker: {
         height: 50,
         width: '100%'
-    }
+    },
+
+    dropdown: {
+        height: 50,
+        width: "100%",
+        paddingHorizontal: 8,
+      },
+      placeholderStyle: {
+        fontSize: 16,
+      },
+      selectedTextStyle: {
+        fontSize: 16,
+        marginLeft: 8,
+      },
+      iconStyle: {
+        width: 20,
+        height: 20,
+      },
 });
 
 export default ColorDetails;
