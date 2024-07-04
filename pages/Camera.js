@@ -1,8 +1,9 @@
 import 'regenerator-runtime/runtime';
 import React, { useState, useRef,useCallback  } from 'react';
-import { StyleSheet, TouchableOpacity, View, Modal, Text, Pressable, Platform } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
-import { MaterialIcons, MaterialCommunityIcons, FontAwesome6 } from '@expo/vector-icons';
+import { StyleSheet, TouchableOpacity, View, Modal, Text, Pressable, Platform, Button } from 'react-native';
+import { CameraView , CameraType, useCameraPermissions  } from 'expo-camera';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
@@ -13,8 +14,7 @@ import { Image as ExpoImage } from 'expo-image';
 
 
 export default function Cameras({ navigation }) {
-  const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const [imageUri, setImageUri] = useState(null);
   const cameraRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,7 +29,7 @@ export default function Cameras({ navigation }) {
   useFocusEffect(
     useCallback(() => {
         async function initCamera() {
-            const { status } = await Camera.requestCameraPermissionsAsync();
+            const { status } = "granted"
             setHasPermission(status === 'granted');
         }
 
@@ -37,22 +37,20 @@ export default function Cameras({ navigation }) {
     }, [])
 );
 
-if (hasPermission === null) {
-    return <View />;
+if (!permission) {
+  // Camera permissions are still loading.
+  return <View />;
 }
 
-if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+if (!permission.granted) {
+  // Camera permissions are not granted yet.
+  return (
+    <View style={styles.container}>
+      <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+      <Button onPress={requestPermission} title="grant permission" />
+    </View>
+  );
 }
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={requestPermission} style={styles.permissionButton}>
-          <MaterialIcons name="photo-camera" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -187,9 +185,7 @@ if (hasPermission === false) {
     return color.length === 6 ? `#${color}` : color.length === 7 ? color : `#${color.slice(1, 7)}`;
   }
 
-  function toggleCameraType() {
-    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-  }
+
   const handleColorSelection = (color, colorName) => {
     setModalVisible(false);
     navigation.navigate('ColorDetails', { color, colorName });
@@ -198,7 +194,7 @@ if (hasPermission === false) {
   return (
     <View style={styles.container}>
          {isFocused && (
-        <Camera ref={cameraRef} style={styles.camera} type={type}>
+        <CameraView ref={cameraRef} style={styles.camera}>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
             <ExpoImage
@@ -214,56 +210,75 @@ if (hasPermission === false) {
               style={styles.sucher}
               />
           </TouchableOpacity>
-        </Camera>
+        </CameraView>
        )}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalView}>
-          <Pressable
-            style={styles.closeButton}
-            onPress={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <Text style={styles.closeButtonText}>X</Text>
-          </Pressable>
+      <SafeAreaView edges={["bottom"]}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalView}>
+            <Pressable
+              style={styles.closeButton}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.closeButtonText}>X</Text>
+            </Pressable>
 
-          <View style={styles.customade}>
-            <Text style={styles.customadeText}>The choice is yours! EIther we can offer you a Custommade Color of your scan or the closest color from our ERKA-Standard range, as shown below.</Text>
-          </View>
+            <View style={styles.customade}>
+              <Text style={styles.customadeText}>The choice is yours! EIther we can offer you a Custommade Color of your scan or the closest color from our ERKA-Standard range, as shown below.</Text>
+            </View>
 
 
-          <View style={[styles.colorDisplay, { backgroundColor: dominantColor }]}>
-            <Text style={styles.colorText}>Your scanned colour</Text>
-          </View>
-
-          <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, hexColor)}>
-            <Text style={styles.btnText}>Continue with a custommade colour</Text>
-          </Pressable>
-
-            {pantoneColors.map((colorInfo, index) => (
-              <View key={index} style={[styles.colorDisplay, styles.erkaColor]}>
-                <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
-
-                  <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
-                </View>
-                  <Pressable style={[styles.button, {borderColor: `#${colorInfo.rgb}`, }]} onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), colorInfo.colour)}>
-                    <Text style={styles.btnText}>Continue with ERKA colour {colorInfo.colour}</Text>
-                  </Pressable>
+            <View style={[styles.colorDisplay]}>
+              <View style={[styles.pantoneColorDisplay, { backgroundColor: dominantColor, }]}>
+                  <Text style={styles.colorText}>Your scanned colour</Text>
               </View>
-            ))}
+            </View>
 
-          </View>
-      </Modal>
+            <View style={[{alignItems:"center", width:"100%",}]}>
+                <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, hexColor)}>
+                  <Text style={styles.btnText}>Continue with a custommade colour</Text>
+                </Pressable>
+            </View>
 
+              {pantoneColors.map((colorInfo, index) => (
+                <View key={index} style={[styles.colorDisplay, styles.erkaColor]}>
+                  <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
+                    <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
+                  </View>
+                    <Pressable style={[styles.button, {borderColor: `#${colorInfo.rgb}`, }]} onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), colorInfo.colour)}>
+                      <Text style={styles.btnText}>Continue with ERKA colour {colorInfo.colour}</Text>
+                    </Pressable>
+
+
+
+
+                    <Text style={[styles.btnText, {marginTop:20,}]}>If both colors do not match your template, please make a new scan.</Text>
+
+
+                    <Pressable
+                    style={styles.buttonRescan}
+                      onPress={() => {
+                        setModalVisible(!modalVisible);
+                      }}
+                    >
+                      <Text   style={styles.textRescan}>Rescan</Text>
+                   </Pressable>
+                </View>
+              ))}
+
+            </View>
+        </Modal>
+      </SafeAreaView>
       <Canvas
         ref={canvasRef}
         style={styles.canvas}
@@ -319,25 +334,24 @@ const styles = StyleSheet.create({
   },
   modalView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop:30,
   },
-  fullSizeImage: {
-    width: '100%',
-    height: '80%',
-  },
+
   closeButton: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 30,
-    right: 20,
-    backgroundColor: 'black',
     padding: 10,
-    borderRadius: 50,
     zIndex: 100,
+    width:"100%",
+    alignItems:"flex-end"
   },
   closeButtonText: {
+    backgroundColor: 'black',
     color: 'white',
+    width:"15%",
     fontSize: 20,
+    marginBottom:30,
+    textAlign:"center"
   },
   colorText: {
     fontSize: 18,
@@ -356,15 +370,15 @@ const styles = StyleSheet.create({
   },
   colorDisplay: {
     width: '100%',
-    height: 150,
+    paddingHorizontal:10,
+    height: 100,
     justifyContent: 'flex-start',
-
     borderRadius: 10,
     marginTop: 20,
   },
   pantoneColorDisplay: {
     width: '100%',
-    height: 150,
+    height: 100,
     justifyContent: 'flex-start',
     borderRadius:10,
   },
@@ -404,7 +418,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom:10,
     marginTop:20,
-    alignItems:'center',
   },
   btnText: {
     fontSize: 18,
@@ -422,5 +435,22 @@ const styles = StyleSheet.create({
     width:150,
     height:150,
     contentFit: 'contain',
+  },
+  buttonRescan:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal:20,
+    marginTop:20,
+    width:"auto",
+    borderRadius: 20,
+    backgroundColor: '#222B2F',
+  },
+  textRescan:{
+    color:"#ffffff",
+    fontSize: 20,
+    lineHeight: 21,
+    fontWeight: '500',
+    letterSpacing: 0.25,
   }
 });
