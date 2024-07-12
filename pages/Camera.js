@@ -3,6 +3,7 @@ import React, { useState, useRef,useCallback  } from 'react';
 import { StyleSheet, TouchableOpacity, View, Modal, Text, Pressable, Platform, Button } from 'react-native';
 import { CameraView , CameraType, useCameraPermissions  } from 'expo-camera';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -25,6 +26,8 @@ export default function Cameras({ navigation }) {
   const [error, setError] = useState('');
   const isFocused = useIsFocused();
   const [hasPermission, setHasPermission] = useState(null);
+  const [modalBackgroundColor, setModalBackgroundColor] = useState('#FFFFFF');  // Standard Weiß als Fallback
+  const [isModalVisibleColor, setModalVisibleColor] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -224,6 +227,14 @@ if (!permission.granted) {
           }}
         >
           <View style={styles.modalView}>
+
+          <View style={styles.headerLogs}>
+          <ExpoImage
+            source={require('../assets/scan-colour.png')}
+            style={styles.logo}
+          />
+        </View>
+
             <Pressable
               style={styles.closeButton}
               onPress={() => {
@@ -233,51 +244,85 @@ if (!permission.granted) {
               <Text style={styles.closeButtonText}>X</Text>
             </Pressable>
 
-            <View style={styles.customade}>
-              <Text style={styles.customadeText}>The choice is yours! EIther we can offer you a Custommade Color of your scan or the closest color from our ERKA-Standard range, as shown below.</Text>
-            </View>
-
-
             <View style={[styles.colorDisplay]}>
               <View style={[styles.pantoneColorDisplay, { backgroundColor: dominantColor, }]}>
                   <Text style={styles.colorText}>Your scanned colour</Text>
+                  <TouchableOpacity style={styles.lupeButton}
+                   onPress={() => {
+                    setModalBackgroundColor(dominantColor); // Diese Zeile setzt die Hintergrundfarbe
+                    setModalVisibleColor(true);
+                  }}>
+                    <ExpoImage
+                      source={require('../assets/lupe.png')}
+                      style={styles.lupeIcon}
+                      />
+                  </TouchableOpacity>
               </View>
             </View>
 
+            <View style={styles.customade}>
+              <Text style={styles.customadeText}>If you like to get exactly the scanned colour, plesae push the button</Text>
+            </View>
+
+
+
             <View style={[{alignItems:"center", width:"100%",}]}>
                 <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, hexColor)}>
-                  <Text style={styles.btnText}>Continue with a custommade colour</Text>
+                  <Text style={styles.btnText}>Continue with Taylormade Food Colour</Text>
                 </Pressable>
+            </View>
+
+            <View style={styles.customade}>
+              <Text style={styles.customadeText}>Or choose the best matching Standard ERKA-Food-Colour</Text>
             </View>
 
               {pantoneColors.map((colorInfo, index) => (
                 <View key={index} style={[styles.colorDisplay, styles.erkaColor]}>
                   <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
                     <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
+                    <TouchableOpacity style={styles.lupeButton}
+                     onPress={() => {
+                      setModalBackgroundColor(dominantColor); // Diese Zeile setzt die Hintergrundfarbe
+                      setModalVisibleColor(true);
+                    }}>
+                    <ExpoImage
+                      source={require('../assets/lupe.png')}
+                      style={styles.lupeIcon}
+                      />
+                  </TouchableOpacity>
                   </View>
                     <Pressable style={[styles.button, {borderColor: `#${colorInfo.rgb}`, }]} onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), colorInfo.colour)}>
-                      <Text style={styles.btnText}>Continue with ERKA colour {colorInfo.colour}</Text>
+                      <Text style={styles.btnText}>Continue with Standard-ERKA Food Colour</Text>
                     </Pressable>
 
-
-
-
-                    <Text style={[styles.btnText, {marginTop:20,}]}>If both colors do not match your template, please make a new scan.</Text>
-
-
-                    <Pressable
-                    style={styles.buttonRescan}
-                      onPress={() => {
-                        setModalVisible(!modalVisible);
-                      }}
-                    >
-                      <Text   style={styles.textRescan}>Rescan</Text>
-                   </Pressable>
                 </View>
               ))}
 
             </View>
         </Modal>
+
+        <Modal
+  animationType="slide"
+  transparent={true}
+  visible={isModalVisibleColor}
+  onRequestClose={() => {
+    setModalVisibleColor(!isModalVisibleColor);
+  }}
+>
+  <View style={[styles.modalView, {backgroundColor: modalBackgroundColor}]}>
+  <Pressable
+  style={styles.closeButtonColoeModal}
+  onPress={() => setModalVisibleColor(false)}
+>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <AntDesign name="arrowleft" size={20} color="#ffffff" />
+    <Text style={styles.closeButtonTextColoeModal}>Back</Text>
+  </View>
+</Pressable>
+
+  </View>
+</Modal>
+
       </SafeAreaView>
       <Canvas
         ref={canvasRef}
@@ -379,7 +424,7 @@ const styles = StyleSheet.create({
   pantoneColorDisplay: {
     width: '100%',
     height: 100,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     borderRadius:10,
   },
   errorText: {
@@ -395,10 +440,12 @@ const styles = StyleSheet.create({
   },
   customade: {
     width:"100%",
+    marginTop:20,
   },
   customadeText: {
     fontSize: 19,
     color: '#222B2F',
+    fontWeight:"400",
     lineHeight:28,
     paddingLeft:20,
     paddingRight:20,
@@ -410,7 +457,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    width:"80%",
+    width:"85%",
     borderRadius: 4,
     elevation: 3,
     backgroundColor: '#EEEEEE',
@@ -420,7 +467,7 @@ const styles = StyleSheet.create({
     marginTop:20,
   },
   btnText: {
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 21,
     fontWeight: '500',
     letterSpacing: 0.25,
@@ -452,5 +499,39 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: '500',
     letterSpacing: 0.25,
-  }
+  },
+  lupeIcon:{
+    width:30,
+    height:30,
+    contentFit: 'contain',
+  },
+  lupeButton:{
+    width:"100%",
+    display:"flex",
+    alignItems:"flex-end",
+    paddingRight:20,
+  },
+  closeButtonColoeModal:{
+    padding: 15,
+    zIndex: 100,
+    width:"100%",
+    alignItems:"flex-start"
+  },
+  closeButtonTextColoeModal:{
+    color: 'white',
+    width:"30%",
+    fontSize: 19,
+    marginLeft:15,
+    fontWeight:"400"
+  },
+  headerLogs: {
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: '5%',
+  },
+  logo: {
+    width: '100%',
+    height: 70,
+    contentFit: 'contain',
+  },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,26 +11,15 @@ const CustomHeader = ({ title1, title2 }) => {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
-      <View style={styles.container}>
-        <LinearGradient
-          colors={['#ee0051', '#f9ae3e']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.linearGradient}
+    <TouchableOpacity
+          onPress={() => navigation.navigate('Start')}
+          style={styles.container}
         >
-          <View style={styles.header}>
-            {canGoBack && (
-              <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={40} color="#fff" />
-              </TouchableOpacity>
-            )}
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{title1}</Text>
-              <Text style={styles.title}>{title2}</Text>
-            </View>
-          </View>
-        </LinearGradient>
-      </View>
+          <Image
+            source={require('../assets/scan-colour.png')}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -38,33 +27,23 @@ const CustomHeader = ({ title1, title2 }) => {
 const styles = StyleSheet.create({
   safeArea: {
     width: '100%',
-    backgroundColor: 'transparent',
+    backgroundColor: '#EEEEEE',
   },
   container: {
     width: '100%',
+    display:'flex',
+    justifyContent:"center",
+    alignItems:"center",
+    height: "100",
+    paddingVertical:50,
+
   },
   header: {
-    height: 70,
+    height: "100",
     flexDirection: 'row',
+    justifyContent:"center",
     alignItems: 'center',
     paddingHorizontal: 10,
-  },
-  backButton: {
-   width:30,
-  },
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 30,
-    textAlign: 'center',
-  },
-  linearGradient: {
-    paddingVertical: 25,
   },
 });
 

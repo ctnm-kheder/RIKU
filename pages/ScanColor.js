@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import { Image } from 'expo-image';
 
 const steps = [
@@ -12,7 +11,7 @@ const steps = [
     icon: (
       <Image
         source={require('../assets/scanStart.png')}
-        style={{width: 80,
+        style={{width: 60,
             height:60,
             contentFit: 'contain',}}
       />
@@ -25,7 +24,7 @@ const steps = [
     icon: (
         <Image
           source={require('../assets/second-check.png')}
-          style={{width: 80,
+          style={{width: 60,
               height: 60,
               contentFit: 'contain',}}
         />
@@ -38,7 +37,7 @@ const steps = [
     icon: (
         <Image
           source={require('../assets/third-request.png')}
-          style={{width: 80,
+          style={{width: 60,
               height: 60,
               contentFit: 'contain',}}
         />
@@ -52,7 +51,7 @@ export default function Home({ navigation }) {
       {steps.map((step) => (
         <View key={step.key} style={styles.step}>
           {typeof step.icon === 'string' ? (
-            <MaterialIcon name={step.icon} size={70} color="#ee0051" />
+            <MaterialIcon name={step.icon} size={40} color="#ee0051" />
           ) : (
             step.icon
           )}
@@ -64,8 +63,10 @@ export default function Home({ navigation }) {
       ))}
 
       <Pressable style={styles.button} onPress={() => navigation.navigate('Camera')}>
-        <Text style={styles.btnText}>Start scanning</Text>
-        <Fontisto name="arrow-right-l" size={20} color="#ee0051" />
+      <Image
+        source={require('../assets/scanning.png')}
+        style={styles.buttonImg}
+        />
       </Pressable>
       <View style={styles.footerLogs}>
         <Image
@@ -83,11 +84,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:"#EEEEEE"
   },
   step: {
     flexDirection: 'row',
+    justifyContent: "center",
     alignItems: 'center',
-    marginBottom: 50,
+    paddingVertical:30,
   },
   textContainer: {
     marginLeft: 10,
@@ -95,25 +98,21 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 22,
     fontWeight: 'bold',
+    marginLeft:20,
   },
   text: {
     fontSize: 18,
     width: 180,
-    opacity: 0.5,
+    fontWeight:"300",
     color: '#222B2F',
+    marginLeft:20,
+
   },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: '#EEEEEE',
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: '#ee0051',
+    width:"80%",
     marginBottom:50,
   },
   btnText: {
@@ -126,11 +125,19 @@ const styles = StyleSheet.create({
     color: "#ee0051"
   },
   logo: {
-    width: '100%',
+    width: '60%',
     height: 100,
     contentFit: 'contain',
   },
+  buttonImg:{
+    width: '60%',
+    height: 60,
+    contentFit: 'contain',
+  },
   footerLogs:{
-    width:"80%",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    width:"100%",
   }
 });

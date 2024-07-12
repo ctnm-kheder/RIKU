@@ -268,6 +268,7 @@ const ColorDetails = ({ route }) => {
         fullName: '',
         email: '',
         postcodeCity: '',
+        street: '',
         country: 'Germany',
         telephone: '',
         commentRequest: '',
@@ -295,7 +296,9 @@ const ColorDetails = ({ route }) => {
         if (!formData.postcodeCity.trim()) {
             errors.postcodeCity = 'Postleitzahl/Stadt ist erforderlich';
         }
-
+        if (!formData.street.trim()) {
+            errors.street = 'Street ist erforderlich';
+        }
         if (!formData.country.trim()) {
             errors.country = 'Land ist erforderlich';
         }
@@ -333,7 +336,7 @@ const ColorDetails = ({ route }) => {
 
     const closeModalAndGoHome = () => {
         hideModal();
-        navigation.navigate('Start');
+        navigation.navigate('Welcome');
     };
 
     const handleSubmit = async () => {
@@ -342,7 +345,7 @@ const ColorDetails = ({ route }) => {
         if (Object.keys(errors).length === 0) {
             setIsSubmitting(true);
             try {
-                const response = await axios.post('https://api-wt3a.onrender.com/send-email', formData);
+                const response = await axios.post('https://dodgerblue-ape-788741.hostingersite.com/index.php/sendmail', formData);
                 showModal('please see your email account for conformation');
             } catch (error) {
                 console.error('Error sending E-Mail:', error.response.data);
@@ -362,20 +365,20 @@ const ColorDetails = ({ route }) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
 
+            {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
+            <TextInput
+                style={styles.input}
+                placeholder="Surname/name*"
+                onChangeText={text => handleChange('fullName', text)}
+                value={formData.fullName}
+            />
+
             {errors.companyName && <Text style={styles.errorText}>{errors.companyName}</Text>}
             <TextInput
                 style={styles.input}
                 placeholder="Company name*"
                 onChangeText={text => handleChange('companyName', text)}
                 value={formData.companyName}
-            />
-
-            {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-            <TextInput
-                style={styles.input}
-                placeholder="Surname/First name*"
-                onChangeText={text => handleChange('fullName', text)}
-                value={formData.fullName}
             />
 
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
@@ -387,6 +390,23 @@ const ColorDetails = ({ route }) => {
                 keyboardType="email-address"
             />
 
+            {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
+            <TextInput
+                style={styles.input}
+                placeholder="Telephone*"
+                onChangeText={text => handleChange('telephone', text)}
+                value={formData.telephone}
+                keyboardType="phone-pad"
+            />
+
+        {errors.street && <Text style={styles.errorText}>{errors.street}</Text>}
+            <TextInput
+                style={styles.input}
+                placeholder="Street*"
+                onChangeText={text => handleChange('street', text)}
+                value={formData.street}
+            />
+
             {errors.postcodeCity && <Text style={styles.errorText}>{errors.postcodeCity}</Text>}
             <TextInput
                 style={styles.input}
@@ -394,6 +414,7 @@ const ColorDetails = ({ route }) => {
                 onChangeText={text => handleChange('postcodeCity', text)}
                 value={formData.postcodeCity}
             />
+
 
             {errors.country && <Text style={styles.errorText}>{errors.country}</Text>}
            <View style={styles.pickerContainer}>
@@ -412,14 +433,15 @@ const ColorDetails = ({ route }) => {
                 />
             </View>
 
-            {errors.telephone && <Text style={styles.errorText}>{errors.telephone}</Text>}
-            <TextInput
-                style={styles.input}
-                placeholder="Telephone*"
-                onChangeText={text => handleChange('telephone', text)}
-                value={formData.telephone}
-                keyboardType="phone-pad"
-            />
+            <View style={styles.containerColor}>
+                <View style={styles.firstView}>
+                    <Text style={styles.colorText}>Your desired Colour</Text>
+                </View>
+
+                <View style={[styles.secondView, { backgroundColor: color }]}>
+                    <Text style={styles.colorTextSecond}>Taylormade</Text>
+                </View>
+            </View>
 
             <TextInput
                 style={[styles.input, styles.textArea]}
@@ -429,16 +451,6 @@ const ColorDetails = ({ route }) => {
                 multiline={true}
                 numberOfLines={4}
             />
-
-            <View style={styles.containerColor}>
-                <View style={styles.firstView}>
-                    <Text style={styles.colorText}>Desired colour:</Text>
-                </View>
-
-                <View style={[styles.secondView, { backgroundColor: color }]}>
-                    <Text style={styles.colorTextSecond}>Custommade</Text>
-                </View>
-            </View>
 
             <Pressable style={[styles.button, { borderColor: color }]} onPress={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? (
@@ -482,13 +494,16 @@ const ColorDetails = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        paddingTop: 20
+        paddingTop: 20,
+        backgroundColor:"#EEEEEE",
     },
     input: {
         height: 50,
         marginBottom: 12,
+        fontWeight:"400",
         borderWidth: 1,
-        borderColor: '#cccccc',
+        borderColor: '#F8FAFC',
+        backgroundColor:"#F8FAFC",
         paddingHorizontal: 10,
         borderRadius: 4,
         fontSize: 16,
@@ -503,7 +518,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     firstView: {
-        flex: 4,
+        flex: 5,
         marginRight: 20,
         height: 50,
         backgroundColor: '#f8f9fa',
@@ -511,7 +526,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     secondView: {
-        flex: 6,
+        flex: 5,
         height: 50,
         backgroundColor: '#dee2e6',
         justifyContent: 'center',
@@ -600,7 +615,8 @@ const styles = StyleSheet.create({
     },
     pickerContainer: {
         borderWidth: 1,
-        borderColor: '#cccccc',
+        borderColor: '#F8FAFC',
+        backgroundColor:"#F8FAFC",
         borderRadius: 4,
         marginBottom: 12,
     },

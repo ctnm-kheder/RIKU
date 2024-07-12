@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Pressable, Text, Image } from 'react-native';
 import Footer from '../components/Footer';
 import { LinearGradient } from 'expo-linear-gradient';
-import { openUri } from '../components/OpenUri'
-import { Image } from 'expo-image';
+import { openUri } from '../components/OpenUri';
 
 export default function Start({ navigation }) {
-
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
@@ -19,35 +18,40 @@ export default function Start({ navigation }) {
             style={styles.gradientButton}
             onPress={() => navigation.navigate('Scan your object')}
           >
-             <Image
+            <View style={styles.btnContainer}>
+              <Image
                 source={require('../assets/scanStartWeiß.png')}
                 style={styles.icon}
-            />
-            <Text style={styles.gradientBtnText}>SCAN YOUR{'\n'}COLOUR</Text>
+              />
+              <Text style={styles.gradientBtnText}>SCAN YOUR{'\n'}COLOUR</Text>
+            </View>
           </Pressable>
         </LinearGradient>
 
         <Pressable
           style={styles.button}
           onPress={() => openUri('https://riku.com/farbmuster')}>
-           <Image
-                source={require('../assets/tabler_color-start-swatch.png')}
+            <View style={styles.btnContainer}>
+              <Image
+                source={require('../assets/farbmuster-no-border.png')}
                 style={styles.icon}
-            />
-          <Text style={[styles.btnText, styles.btnTextErka]}>ERKA{'\n'}COLOURS</Text>
+              />
+              <Text style={[styles.btnText, styles.btnTextErka]}>ERKA{'\n'}COLOURS</Text>
+            </View>
         </Pressable>
 
         <Pressable
           style={styles.button}
           onPress={() => openUri('https://riku.com/')}>
-           <Image
+            <View style={styles.btnContainer}>
+              <Image
                 source={require('../assets/Ringe.png')}
                 style={styles.icon}
-            />
-          <Text style={[styles.btnText, styles.btnTextRinge]}>RINGE +{'\n'}KUHLMANN</Text>
+              />
+              <Text style={[styles.btnText, styles.btnTextRinge]}>RINGE +{'\n'}KUHLMANN</Text>
+            </View>
         </Pressable>
       </View>
-      <Footer style={styles.footer} />
     </View>
   );
 }
@@ -55,60 +59,69 @@ export default function Start({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 0,
+    backgroundColor: "#EEEEEE"
   },
   buttonContainer: {
     flex: 1,
-    paddingHorizontal: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    paddingHorizontal: 30,
+    width:"100%"
   },
   gradient: {
     borderRadius: 20,
     marginVertical: 10,
-    height: '20%',
+    height: 128,
   },
   gradientButton: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     borderRadius: 20,
+    width:"100%",
     height: '100%',
   },
   gradientBtnText: {
     fontSize: 24,
     lineHeight: 28,
     fontWeight: '800',
-    letterSpacing: 0.25,
     color: '#ffffff',
-    marginLeft: 30,
+    flex: 0.7,  // 70% des verfügbaren Platzes
   },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
     borderRadius: 20,
     elevation: 3,
     backgroundColor: '#ffffff',
     marginVertical: 10,
-    height: '20%',
+    height: 128,
   },
   btnText: {
     fontSize: 24,
     lineHeight: 28,
     fontWeight: '800',
-    letterSpacing: 0.25,
-    marginLeft: 30,
+    flex: 0.7,  // 70% des verfügbaren Platzes
   },
   btnTextErka: {
-    color:'#FF73A6'
+    color: '#FF73A6',
   },
   btnTextRinge: {
-    color:'#005482',
+    color: '#005482',
   },
   icon: {
-    width:60,
-    height:60,
-    contentFit: 'contain',
+    width: 50,
+    height: 50,
+    flex: 0.3,  // 30% des verfügbaren Platzes
+    resizeMode: 'contain',
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft:40,
+    justifyContent: 'center',
+    flex: 1,  // Stellen Sie sicher, dass dieser Container flexibel ist
   }
 });

@@ -1,12 +1,13 @@
+// components/StartHeader.js
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const StartHeader = () => {
+const StartHeader = ({backgroundColor, logoSource }) => {
   return (
-    <SafeAreaView edges={["top"]} style={styles.headerContainer}>
+    <SafeAreaView edges={["top"]} style={[styles.headerContainer, { backgroundColor }]}>
       <Image 
-        source={require('../assets/natural.png')}
+        source={logoSource}
         style={styles.logo}
       />
     </SafeAreaView>
@@ -16,17 +17,15 @@ const StartHeader = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom:30,
+    paddingTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor:"#f5f5f5",
     width: '100%',
     paddingHorizontal: 40,
   },
   logo: {
-    width: '100%',
-    height: 180,
+    width: '75%',
+    height: 100,
     resizeMode: 'contain',
   },
 });
