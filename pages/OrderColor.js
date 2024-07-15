@@ -6,7 +6,9 @@ import { SelectCountry } from 'react-native-element-dropdown';
 import {
     useFonts,
     OpenSans_300Light,
+    OpenSans_400Regular
   } from '@expo-google-fonts/open-sans';
+  import AppLoading from 'expo-app-loading';
 
 const ColorDetails = ({ route }) => {
     const navigation = useNavigation();
@@ -502,8 +504,6 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingTop: 20,
         backgroundColor:"#EEEEEE",
-        fontFamily: 'OpenSans_300Light',
-
     },
     input: {
         height: 50,
@@ -513,6 +513,7 @@ const styles = StyleSheet.create({
         backgroundColor:"#F8FAFC",
         paddingHorizontal: 10,
         borderRadius: 4,
+        fontFamily: 'OpenSans_300Light',
         fontSize: 16,
     },
     textArea: {
