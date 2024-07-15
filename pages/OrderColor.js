@@ -3,10 +3,16 @@ import {View, TextInput, Pressable, StyleSheet, ScrollView, Text, ActivityIndica
 import axios from 'react-native-axios';
 import { useNavigation } from '@react-navigation/native';
 import { SelectCountry } from 'react-native-element-dropdown';
+import {
+    useFonts,
+    OpenSans_300Light,
+  } from '@expo-google-fonts/open-sans';
 
 const ColorDetails = ({ route }) => {
     const navigation = useNavigation();
-
+    let [fontsLoaded] = useFonts({
+        OpenSans_300Light,
+      });
     const { color, colorName } = route.params;
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
@@ -272,7 +278,7 @@ const ColorDetails = ({ route }) => {
         country: 'Germany',
         telephone: '',
         commentRequest: '',
-        orderColor: colorName,
+        orderColor: color,
     });
 
 
@@ -435,28 +441,28 @@ const ColorDetails = ({ route }) => {
 
             <View style={styles.containerColor}>
                 <View style={styles.firstView}>
-                    <Text style={styles.colorText}>Your desired Colour</Text>
+                    <Text style={styles.colorText}>Your desired Colour: {colorName}</Text>
                 </View>
 
-                <View style={[styles.secondView, { backgroundColor: color }]}>
-                    <Text style={styles.colorTextSecond}>Taylormade</Text>
-                </View>
+                <View style={[styles.secondView, { backgroundColor: color }]}></View>
             </View>
 
+
             <TextInput
-                style={[styles.input, styles.textArea]}
+                style={[ styles.textArea]}
                 placeholder="Comment/Request"
                 onChangeText={text => handleChange('commentRequest', text)}
                 value={formData.commentRequest}
                 multiline={true}
+                textAlignVertical="top"
                 numberOfLines={4}
             />
 
-            <Pressable style={[styles.button, { borderColor: color }]} onPress={handleSubmit} disabled={isSubmitting}>
+            <Pressable style={[styles.button, { borderColor: "#EE0051", borderWidth:2 }]} onPress={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? (
                     <ActivityIndicator size="large" color={color} />
                 ) : (
-                    <Text style={styles.colorText}>Send</Text>
+                    <Text style={[styles.colorText, {letterSpacing:3, color:"#EE0051", fontWeight:"400"}]}>SEND</Text>
                 )}
             </Pressable>
             <Text style={[styles.colorText, {marginTop:10,}]}>We will automatically send a confirmation of your enquiry to your e-mail address</Text>
@@ -496,11 +502,12 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingTop: 20,
         backgroundColor:"#EEEEEE",
+        fontFamily: 'OpenSans_300Light',
+
     },
     input: {
         height: 50,
         marginBottom: 12,
-        fontWeight:"400",
         borderWidth: 1,
         borderColor: '#F8FAFC',
         backgroundColor:"#F8FAFC",
@@ -509,7 +516,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     textArea: {
-        height: 100
+        height: 100,
+        paddingTop:10,
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        paddingHorizontal: 10,
+        borderRadius: 4,
+        fontSize: 16,
+        fontFamily: 'OpenSans_300Light',
+        textAlign: 'left',
+        backgroundColor: "#F8FAFC",
+        borderWidth: 1,
+        borderColor: '#F8FAFC',
+        marginBottom: 12,
     },
     containerColor: {
         flex: 1,
@@ -523,26 +543,27 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: '#f8f9fa',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     secondView: {
         flex: 5,
         height: 50,
         backgroundColor: '#dee2e6',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     colorText: {
         fontSize: 16,
         width: '100%',
         color: '#3B4256',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: 'OpenSans_300Light',
     },
     colorTextSecond: {
         fontSize: 16,
         width: '100%',
         color: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     button: {
         alignItems: 'center',
@@ -599,7 +620,7 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 16,
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
     },
     modalText: {
         marginBottom: 15,
@@ -632,6 +653,7 @@ const styles = StyleSheet.create({
       selectedTextStyle: {
         fontSize: 16,
         marginLeft: 8,
+        fontFamily: 'OpenSans_300Light',
       },
       iconStyle: {
         width: 20,

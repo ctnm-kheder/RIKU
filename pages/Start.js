@@ -17,9 +17,9 @@ export default function Start({ navigation }) {
             <View style={styles.ButtonContainer}>
               <Pressable style={styles.button} onPress={() => navigation.navigate('Overview')}>
               <Image
-            source={require('../assets/Continue.png')}
-            style={styles.logo}
-          />
+                  source={require('../assets/Continue.png')}
+                  style={styles.Continuebutton}
+              />
               </Pressable>
             </View>
           </View>
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: '5%',
+    backgroundColor:"#EEEEEE"
   },
   content: {
     width: '100%',
@@ -53,6 +54,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
+    width: '80%',
+    height: height * 0.1,
+    contentFit: 'contain',
+  },
+  Continuebutton:{
     width: '70%',
     height: height * 0.1,
     contentFit: 'contain',

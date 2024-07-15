@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     color: "#ee0051"
   },
   logo: {
-    width: '60%',
+    width: '70%',
     height: 100,
     contentFit: 'contain',
   },

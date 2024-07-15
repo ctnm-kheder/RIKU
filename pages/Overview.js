@@ -34,7 +34,7 @@ export default function Start({ navigation }) {
             <View style={styles.btnContainer}>
               <Image
                 source={require('../assets/farbmuster-no-border.png')}
-                style={styles.icon}
+                style={[styles.icon, {width:75, height:75}]}
               />
               <Text style={[styles.btnText, styles.btnTextErka]}>ERKA{'\n'}COLOURS</Text>
             </View>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     borderRadius: 20,
-    marginVertical: 10,
+    marginVertical: 30,
     height: 128,
   },
   gradientButton: {
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     fontWeight: '800',
     color: '#ffffff',
-    flex: 0.7,  // 70% des verfügbaren Platzes
+    flex: 0.6,  // 70% des verfügbaren Platzes
   },
   button: {
     alignItems: 'center',
@@ -96,14 +96,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 3,
     backgroundColor: '#ffffff',
-    marginVertical: 10,
+    marginVertical: 30,
     height: 128,
   },
   btnText: {
     fontSize: 24,
     lineHeight: 28,
     fontWeight: '800',
-    flex: 0.7,  // 70% des verfügbaren Platzes
+    flex: 0.6,  // 70% des verfügbaren Platzes
   },
   btnTextErka: {
     color: '#FF73A6',
@@ -112,15 +112,15 @@ const styles = StyleSheet.create({
     color: '#005482',
   },
   icon: {
-    width: 50,
-    height: 50,
-    flex: 0.3,  // 30% des verfügbaren Platzes
+    width: 65,
+    height: 65,
+    flex: 0.4,  // 30% des verfügbaren Platzes
     resizeMode: 'contain',
   },
   btnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft:40,
+    marginLeft:25,
     justifyContent: 'center',
     flex: 1,  // Stellen Sie sicher, dass dieser Container flexibel ist
   }

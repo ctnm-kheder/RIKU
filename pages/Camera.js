@@ -12,7 +12,10 @@ import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 import { PMSColorMatching } from "../components/ColorMatching"
 import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { Image as ExpoImage } from 'expo-image';
-
+import {
+  useFonts,
+  OpenSans_300Light,
+} from '@expo-google-fonts/open-sans';
 
 export default function Cameras({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -28,7 +31,9 @@ export default function Cameras({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [modalBackgroundColor, setModalBackgroundColor] = useState('#FFFFFF');  // Standard Weiß als Fallback
   const [isModalVisibleColor, setModalVisibleColor] = useState(false);
-
+  let [fontsLoaded] = useFonts({
+    OpenSans_300Light,
+  });
   useFocusEffect(
     useCallback(() => {
         async function initCamera() {
@@ -235,14 +240,6 @@ if (!permission.granted) {
           />
         </View>
 
-            <Pressable
-              style={styles.closeButton}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <Text style={styles.closeButtonText}>X</Text>
-            </Pressable>
 
             <View style={[styles.colorDisplay]}>
               <View style={[styles.pantoneColorDisplay, { backgroundColor: dominantColor, }]}>
@@ -267,8 +264,14 @@ if (!permission.granted) {
 
 
             <View style={[{alignItems:"center", width:"100%",}]}>
-                <Pressable style={[styles.button, {borderColor: hexColor, }]} onPress={() => handleColorSelection(hexColor, hexColor)}>
-                  <Text style={styles.btnText}>Continue with Taylormade Food Colour</Text>
+                <Pressable onPress={() => handleColorSelection(hexColor, "Taylormade")}>
+                <ExpoImage
+                      source={require('../assets/Taylormade.png')}
+                      style={[{    width: 350,
+                      height: 70,
+                      contentFit: 'contain',}]}
+
+                      />
                 </Pressable>
             </View>
 
@@ -279,7 +282,10 @@ if (!permission.granted) {
               {pantoneColors.map((colorInfo, index) => (
                 <View key={index} style={[styles.colorDisplay, styles.erkaColor]}>
                   <View key={index} style={[styles.pantoneColorDisplay, { backgroundColor: formatHexColor(colorInfo.rgb) }]}>
-                    <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
+                  <View style={styles.colorTextContainer}>
+      <Text style={styles.colorText}>Next matching ERKA-Colour {colorInfo.colour}</Text>
+    </View>
+
                     <TouchableOpacity style={styles.lupeButton}
                      onPress={() => {
                       setModalBackgroundColor(dominantColor); // Diese Zeile setzt die Hintergrundfarbe
@@ -291,12 +297,31 @@ if (!permission.granted) {
                       />
                   </TouchableOpacity>
                   </View>
-                    <Pressable style={[styles.button, {borderColor: `#${colorInfo.rgb}`, }]} onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), colorInfo.colour)}>
-                      <Text style={styles.btnText}>Continue with Standard-ERKA Food Colour</Text>
+                    <Pressable onPress={() => handleColorSelection(formatHexColor(colorInfo.rgb), "ERKA Standard")}>
+                    <ExpoImage
+                      source={require('../assets/Erka-food.png')}
+                      style={[{    width: 350,
+                      height: 80,
+                      contentFit: 'contain',}]}
+
+                      />
                     </Pressable>
+                    <Pressable
+                      style={styles.closeButton}
+                      onPress={() => {
+                        setModalVisible(!modalVisible);
+                      }}
+                 >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:20, }}>
+                    <AntDesign name="arrowleft" size={20} color="#222B2F" />
+                    <Text style={[styles.closeButtonTextColoeModal, {color:"#222B2F"}]}>Back to Camera</Text>
+                </View>
+
+            </Pressable>
 
                 </View>
               ))}
+
 
             </View>
         </Modal>
@@ -382,28 +407,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingTop:30,
+    backgroundColor:"#EEEEEE"
   },
 
   closeButton: {
     padding: 10,
-    zIndex: 100,
+    height:"100%",
     width:"100%",
-    alignItems:"flex-end"
+    alignItems:"flex-start"
   },
   closeButtonText: {
-    backgroundColor: 'black',
-    color: 'white',
+    color: 'red',
     width:"15%",
     fontSize: 20,
-    marginBottom:30,
-    textAlign:"center"
   },
   colorText: {
     fontSize: 18,
     marginTop: 10,
     marginLeft:40,
     color:'white',
-    textAlign:'left'
+    textAlign:'left',
+    fontFamily: 'OpenSans_300Light',
   },
   canvas: {
     width: 1,
@@ -415,18 +439,19 @@ const styles = StyleSheet.create({
   },
   colorDisplay: {
     width: '100%',
-    paddingHorizontal:10,
-    height: 100,
-    justifyContent: 'flex-start',
+    height: 130,
     borderRadius: 10,
     marginTop: 20,
+    paddingHorizontal:10,
+
   },
   pantoneColorDisplay: {
     width: '100%',
-    height: 100,
-    justifyContent: 'center',
+    height: 130,
+    width: '100%',
     borderRadius:10,
   },
+
   errorText: {
     color: 'red',
     fontSize: 18,
@@ -446,6 +471,7 @@ const styles = StyleSheet.create({
     fontSize: 19,
     color: '#222B2F',
     fontWeight:"400",
+    fontFamily: 'OpenSans_300Light',
     lineHeight:28,
     paddingLeft:20,
     paddingRight:20,
@@ -507,9 +533,9 @@ const styles = StyleSheet.create({
   },
   lupeButton:{
     width:"100%",
-    display:"flex",
-    alignItems:"flex-end",
+    marginTop:50,
     paddingRight:20,
+    alignItems:"flex-end"
   },
   closeButtonColoeModal:{
     padding: 15,
@@ -519,10 +545,11 @@ const styles = StyleSheet.create({
   },
   closeButtonTextColoeModal:{
     color: 'white',
-    width:"30%",
+    width:"50%",
     fontSize: 19,
     marginLeft:15,
-    fontWeight:"400"
+    fontWeight:"400",
+    fontFamily: 'OpenSans_300Light',
   },
   headerLogs: {
     width: '100%',
